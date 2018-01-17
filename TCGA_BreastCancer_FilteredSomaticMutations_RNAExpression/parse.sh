@@ -16,6 +16,9 @@ varscan=$inFiles/"TCGA.BRCA.varscan.2849f60b-c211-469a-a1ef-4105bb75d3ec.DR-7.0.
 muse=$inFiles/"TCGA.BRCA.muse.d9876b23-3e7d-4d7b-bc1b-3b4393cd2afb.DR-7.0.somatic.maf.gz"
 somaticsniper=$inFiles/"TCGA.BRCA.somaticsniper.8b1474b5-0216-4dbc-bc21-e5c6fcb5600f.DR-7.0.somatic.maf.gz"
 expression=$inFiles/"GSM1536837_06_01_15_TCGA_24.tumor_Rsubread_TPM.txt.gz"
+clinical=$inFiles/"GSE62944_06_01_15_TCGA_24_548_Clinical_Variables_9264_Samples.txt.gz"
+patientCancerType=$inFiles/"GSE62944_06_01_15_TCGA_24_CancerType_Samples.txt"
+transposedTumorTPM=$outFiles/transposedTumorTPM.txt
 
 mutectOut=$outFiles/"TCGA.BRCA.mutect.c6a029e5-0ea3-410d-9e67-360bdfee2914.DR-7.0.somatic_adjusted.maf.gz"
 varscanOut=$outFiles/"TCGA.BRCA.varscan.2849f60b-c211-469a-a1ef-4105bb75d3ec.DR-7.0.somatic_adjusted.maf.gz"
@@ -24,7 +27,11 @@ somaticsniperOut=$outFiles/"TCGA.BRCA.somaticsniper.8b1474b5-0216-4dbc-bc21-e5c6
 
 singleOut=$outFiles/condensed.maf.gz
 data=data.tsv.gz
+dataOutFilegz=data.tsv.gz
+metadataOutFilegz=metadata.tsv.gz
+
 
 #python parse.py $mutect $varscan $muse $somaticsniper $mutectOut $varscanOut $museOut $somaticsniperOut
 python parse2.py $mutectOut $varscanOut $museOut $somaticsniperOut $singleOut
-python parse4.py $expression $data
+#python parse3.py $clinical $patientCancerType $expression $transposedTumorTPM $dataOutFile $metadataOutFile
+#python parse4.py $expression $data

@@ -83,7 +83,7 @@ with open(transposedTumorTPM, 'r') as iF:
                 lineList[0] = '-'.join(lineList[0].split('-')[:4])
                 for mutation in somaticMutations[lineList[0] :
                     ofMeta.write(lineList[0] + "\tSomatic mutation\t" + mutation)
-                ofMeta.write(lineList[0] + "\tCancer_Type\t" + patientIDToCancerDict[lineList[0]] + "\n")
+#                ofMeta.write(lineList[0] + "\tCancer_Type\t" + patientIDToCancerDict[lineList[0]] + "\n")
                 for i in range(len(metaDataList)) :
                     if(metaDataList[i] != "NA") :
                         ofMeta.write(lineList[0] + '\t' + metadataDict["header"][i] + '\t' + metaDataList[i] + '\n')

@@ -30,10 +30,10 @@ def columnsOfInterest(inFile, mutationDict, duplicationList) :
                     alleleIndex = [i for i in range(len(headerList)) if headerList[i] == "Allele"][0]
                 else : 
                     lineList = line.strip('\n').split('\t')
-#                    createdId = lineList[0] + "_" + '-'.join(lineList[barcodeIndex].split('-')[:4])
+                    createdId = lineList[0] + "_" + '-'.join(lineList[barcodeIndex].split('-')[:4])
 #                    createdId = lineList[0] 
 #                    createdId = lineList[0] + "_" + '-'.join(lineList[barcodeIndex].split('-'))
-                    createdId = '-'.join(lineList[barcodeIndex].split('-')[:4]) + "_" + lineList[hugoSymbolIndex] + "_" + lineList[chromosomeIndex] + "_" + lineList[startPositionIndex] + "_" + lineList[endPositionIndex] + "_" + lineList[strandIndex] + "_" + lineList[alleleIndex]
+#                    createdId = '-'.join(lineList[barcodeIndex].split('-')[:4]) + "_" + lineList[hugoSymbolIndex] + "_" + lineList[chromosomeIndex] + "_" + lineList[startPositionIndex] + "_" + lineList[endPositionIndex] + "_" + lineList[strandIndex] + "_" + lineList[alleleIndex]
 #                    createdId = lineList[hugoSymbolIndex] + "_" + lineList[chromosomeIndex] + "_" + lineList[startPositionIndex] + "_" + lineList[endPositionIndex] + "_" + lineList[strandIndex] + "_" + lineList[alleleIndex]
                     try :
 #                        fileList = mutationDict[createdId]
@@ -58,7 +58,8 @@ columnsOfInterest(museIn, mutationDict, duplicationList)
 columnsOfInterest(somaticsniperIn, mutationDict, duplicationList)
 
 with gzip.open(outFile, 'w') as oF :
-    oF.write(("Patient_Id\tHugo_Symbol\tChromosome\tStart_Position\tEnd_Position\tStrand\tAllele\n").encode())
+#    oF.write(("Patient_Id\tHugo_Symbol\tChromosome\tStart_Position\tEnd_Position\tStrand\tAllele\n").encode())
+    oF.write(("Patient_Id\tHugo_Symbol\n").encode())
     for createdId, files  in mutationDict.items() :
         if len(files) > 4 : 
             raise ValueError("Duplication in file")
