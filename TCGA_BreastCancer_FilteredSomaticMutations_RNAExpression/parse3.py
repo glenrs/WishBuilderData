@@ -6,6 +6,8 @@ tumorTPM = sys.argv[3]
 transposedTumorTPM = sys.argv[4]
 dataOutFile = sys.argv[5]
 metadataOutFile = sys.argv[6]
+condensedMutationData = sys.argv[7]
+
 
 # functions copied from fslg_piccololab/code/utilities.py
 def readMatrixFromFile(filePath, numLines=None):
@@ -16,7 +18,7 @@ def readMatrixFromFile(filePath, numLines=None):
 
         matrix.append(line.rstrip().split("\t"))
 
-        if len(matrix) % 100000 == 0:
+        if len(matrix) % 100 == 0:
             print len(matrix)
 
     return matrix
@@ -40,17 +42,18 @@ def transposeMatrix(x):
 
 # code copied from fslg_piccololab/code/TransposeData.py
 # This code transposes tumorTPM and stores the transposed version in transposedTumorTPM
-data = readMatrixFromFile(tumorTPM)
+#data = readMatrixFromFile(tumorTPM)
 
-if len(data) > 1 and len(data[0]) == len(data[1]) - 1:
-    data[0].insert(0, " ")
+#if len(data) > 1 and len(data[0]) == len(data[1]) - 1:
+#    data[0].insert(0, " ")
 
-writeMatrixToFile(transposeMatrix(data), transposedTumorTPM)
+#writeMatrixToFile(transposeMatrix(data), transposedTumorTPM)
 
 # This code takes the new transposedTumorTPM and addes the PatientCancerType to the second column and writes it to the outFile data.tsv.gz
 patientIDToCancerDict = {}
 with open(PatientCancerType, 'r') as f:
     for line in f:
+        print(line)
         lineList= line.strip('\n').split('\t')
         patientIDToCancerDict[lineList[0]] = lineList[1]
 
@@ -59,8 +62,6 @@ data = readMatrixFromFile(metadata)
 
 if len(data) > 1 and len(data[0]) == len(data[1]) - 1:
     data[0].insert(0, " ")
-
-#writeMatrixToFile(transposeMatrix(data), transposedMetadata)
 
 metadataDict = {}
 first = True
@@ -71,20 +72,50 @@ for list in transposeMatrix(data) :
     else :
         metadataDict[list[0]] = list[3:]
 
+PatientIdToMutations = {}
+with open(condensedMutationData, 'r') as f:
+    f.readline()
+    for line in f :
+        print(line)
+        lineList = line.strip('\n').split('\t')
+        print(lineList) 
+        try :
+            PatientIdToMutations[lineList[1]].append(lineList[0])
+        except KeyError :
+            PatientIdToMutations[lineList[1]] = []
+            PatientIdToMutations[lineList[1]].append(lineList[0])
+
 with open(transposedTumorTPM, 'r') as iF:
     with open(dataOutFile, 'w') as ofData:
         with open(metadataOutFile, 'w') as ofMeta:
             firstLine = iF.readline().strip('\n').split('\t')
-            ofMeta.write("SampleID\tVariable\tValue\n")
-            ofData.write("SampleID\t" + '\t'.join(firstLine[1:]) + '\n')
+            ofMeta.write("Sample\tVariable\tValue\n")
+            ofData.write("Sample\t" + '\t'.join(firstLine[1:]) + '\n')
+            j = 0
+            print("starting to write out")
             for line in iF:
+                j = j + 1
+                if j > 1000 :
+                    break
+                print("line " + str(j))
                 lineList = line.strip('\n').split('\t')
                 metaDataList = metadataDict[lineList[0]]
-                lineList[0] = '-'.join(lineList[0].split('-')[:4])
-                for mutation in somaticMutations[lineList[0] :
-                    ofMeta.write(lineList[0] + "\tSomatic mutation\t" + mutation)
-#                ofMeta.write(lineList[0] + "\tCancer_Type\t" + patientIDToCancerDict[lineList[0]] + "\n")
+                if patientIDToCancerDict[lineList[0]] != "BRCA" : #We only want expression and metadata values associated with BRCA
+                    continue
+                allNA = True
+
+                patientId = '-'.join(lineList[0].split('-')[:4])
+                try : #check to see if the BRCA patient is in the condensed file
+                    mutationList = PatientIdToMutations[patientId] 
+                except KeyError :
+                    print("patient Id not in condensed file: " + patientId)
+                    continue
                 for i in range(len(metaDataList)) :
-                    if(metaDataList[i] != "NA") :
+                    if(metaDataList[i] != "NA") : #I can't find the email, but originally we were only excluding it if it was NA
                         ofMeta.write(lineList[0] + '\t' + metadataDict["header"][i] + '\t' + metaDataList[i] + '\n')
-                ofData.write('\t'.join(lineList) + '\n')
+                        allNA = False
+                #        if (metaDataList[i] != "[Not Available]") and (metaDataList[i] != "[Not Applicable]") :
+                if allNA == False :
+                    for mutation in mutationList :
+                        ofMeta.write(lineList[0] + "\tSomatic mutation\t" + mutation + "\n")
+                    ofData.write('\t'.join(lineList) + '\n')

@@ -23,12 +23,14 @@ url="https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE62944&format=file&file=GS
 fileName=GSE62944_06_01_15_TCGA_24_548_Clinical_Variables_9264_Samples.txt.gz
 
 wget -O $fileName $url
+gunzip $fileName
 
 #downloading CancerType Samples
 url="https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE62944&format=file&file=GSE62944%5F06%5F01%5F15%5FTCGA%5F24%5FCancerType%5FSamples%2Etxt%2Egz"
 fileName=GSE62944_06_01_15_TCGA_24_CancerType_Samples.txt.gz
 
 #wget -O $fileName $url
+#gunzip $fileName
 
 #downloading the raw data
 url="https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE62944&format=file"
@@ -49,3 +51,4 @@ fileName=GSE62944_RAW.tar
 #rm GSM1697009_06_01_15_TCGA_24.normal_Rsubread_FPKM.txt.gz
 #rm GSM1697009_06_01_15_TCGA_24.normal_Rsubread_TPM.txt.gz
 
+gunzip GSM1536837_06_01_15_TCGA_24.tumor_Rsubread_TPM.txt.gz
