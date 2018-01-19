@@ -30,8 +30,8 @@ data=data.tsv.gz
 dataOutFilegz=data.tsv.gz
 metadataOutFilegz=metadata.tsv.gz
 
+mkdir -p $outFiles
 
-#python3 parse.py $mutect $varscan $muse $somaticsniper $mutectOut $varscanOut $museOut $somaticsniperOut
-#python3 parse2.py $mutectOut $varscanOut $museOut $somaticsniperOut $singleOut
+python3 parse.py $mutect $varscan $muse $somaticsniper $mutectOut $varscanOut $museOut $somaticsniperOut
+python3 parse2.py $mutectOut $varscanOut $museOut $somaticsniperOut $singleOut
 python2 parse3.py $clinical $patientCancerType $expression $transposedTumorTPM $dataOutFilegz $metadataOutFilegz $singleOut 
-#python3 parse4.py $expression $data

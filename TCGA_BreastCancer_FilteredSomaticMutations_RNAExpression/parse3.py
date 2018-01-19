@@ -42,12 +42,12 @@ def transposeMatrix(x):
 
 # code copied from fslg_piccololab/code/TransposeData.py
 # This code transposes tumorTPM and stores the transposed version in transposedTumorTPM
-#data = readMatrixFromFile(tumorTPM)
+data = readMatrixFromFile(tumorTPM)
 
-#if len(data) > 1 and len(data[0]) == len(data[1]) - 1:
-#    data[0].insert(0, " ")
+if len(data) > 1 and len(data[0]) == len(data[1]) - 1:
+    data[0].insert(0, " ")
 
-#writeMatrixToFile(transposeMatrix(data), transposedTumorTPM)
+writeMatrixToFile(transposeMatrix(data), transposedTumorTPM)
 
 # This code takes the new transposedTumorTPM and addes the PatientCancerType to the second column and writes it to the outFile data.tsv.gz
 patientIDToCancerDict = {}
@@ -93,29 +93,45 @@ with open(transposedTumorTPM, 'r') as iF:
             ofData.write("Sample\t" + '\t'.join(firstLine[1:]) + '\n')
             j = 0
             print("starting to write out")
+            first = True
             for line in iF:
                 j = j + 1
-                if j > 1000 :
-                    break
-                print("line " + str(j))
+                if j % 1000 :
+                    print("line " + str(j))
+
                 lineList = line.strip('\n').split('\t')
                 metaDataList = metadataDict[lineList[0]]
+                #Pass over everything that is not BRCA
                 if patientIDToCancerDict[lineList[0]] != "BRCA" : #We only want expression and metadata values associated with BRCA
                     continue
-                allNA = True
 
                 patientId = '-'.join(lineList[0].split('-')[:4])
+                #See if the specific BRCA patient is in the condensed file
                 try : #check to see if the BRCA patient is in the condensed file
                     mutationList = PatientIdToMutations[patientId] 
                 except KeyError :
                     print("patient Id not in condensed file: " + patientId)
                     continue
+
+                ## Only BRCA patients in the condensed file should execute the following lines
+                allNA = True 
+                notAvailableMetaVariables = [] 
                 for i in range(len(metaDataList)) :
-                    if(metaDataList[i] != "NA") : #I can't find the email, but originally we were only excluding it if it was NA
-                        ofMeta.write(lineList[0] + '\t' + metadataDict["header"][i] + '\t' + metaDataList[i] + '\n')
-                        allNA = False
-                #        if (metaDataList[i] != "[Not Available]") and (metaDataList[i] != "[Not Applicable]") :
+                    if i == 66 :
+                        continue
+                    if(metaDataList[i] != "NA" and metaDataList[i] != "[Not Applicable]") : #excluding NA and [Not Applicable], but keeping [Not Available] unless they are the only values
+                        if(metaDataList[i] != "[Not Available]") :
+                            ofMeta.write(lineList[0] + '\t' + metadataDict["header"][i] + '\t' + metaDataList[i] + '\n')
+                            allNA = False
+                        else :
+                            #If all the values are [Not Available] we do not want to include them because we won't have any metavariables for the patient
+                            notAvailableMetaVariables.append(i) 
+                             
                 if allNA == False :
+                    for i in notAvailableMetaVariables : #Include the metavariables if not all of them are NA, [Not Applicable], and [Not Available]
+                        ofMeta.write(lineList[0] + '\t' + metadataDict["header"][i] + '\t' + metaDataList[i] + '\n')
                     for mutation in mutationList :
                         ofMeta.write(lineList[0] + "\tSomatic mutation\t" + mutation + "\n")
                     ofData.write('\t'.join(lineList) + '\n')
+
+
