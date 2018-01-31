@@ -8,7 +8,9 @@ RACS = sys.argv[4]
 variants = sys.argv[5]
 expressionIn = sys.argv[6]
 clinicalOut = sys.argv[7]
-expressionOut = sys.argv[8]
+tmpExpression = sys.argv[8]
+finalExpression = sys.argv[9]
+
 
 def readSheetToMultipleDfs(xl,sheetname, indecisBetweenTables) :
     line = []
@@ -95,7 +97,7 @@ headerValues = 0
 indecisOfInterest = []
 headersList = []
 print("Writing Expression data to data.tsv.gz")
-with gzip.open(expressionOut, 'w') as oF :
+with gzip.open(tmpExpression, 'w') as oF :
     with gzip.open(expressionIn, 'r') as iF :
         headersList = iF.readline().strip('\n').split('\t')
 
@@ -113,6 +115,9 @@ with gzip.open(expressionOut, 'w') as oF :
                     headersNotConverted.append(headersList[i])
         first = True
         firstOACp4C = True
+        firstSKMEL28 = True
+        firstKMH2 = True
+        firstOCIAML5 = True
         for i in indecisOfInterest :
             if first == True :
                 first = False
@@ -120,6 +125,24 @@ with gzip.open(expressionOut, 'w') as oF :
             elif headersList[i] == "OACp4C" : #The original dataset has two variables titled OACp4C, this will label only the second in the header so we can average the values on each line and leave the value in this indeci
                 if firstOACp4C == True :
                     firstOACp4C = False
+                    continue
+                else :
+                    oF.write("\t" + headersList[i])
+            elif headersList[i] == "SK-MEL-28" : #The original dataset has two variables titled OACp4C, this will label only the second in the header so we can average the values on each line and leave the value in this indeci
+                if firstSKMEL28 == True :
+                    firstSKMEL28 = False
+                    continue
+                else :
+                    oF.write("\t" + headersList[i])
+            elif headersList[i] == "KM-H2" : #The original dataset has two variables titled OACp4C, this will label only the second in the header so we can average the values on each line and leave the value in this indeci
+                if firstKMH2 == True :
+                    firstKMH2 = False
+                    continue
+                else :
+                    oF.write("\t" + headersList[i])
+            elif headersList[i] == "OCI-AML5" : #The original dataset has two variables titled OACp4C, this will label only the second in the header so we can average the values on each line and leave the value in this indeci
+                if firstOCIAML5 == True :
+                    firstOCIAML5 = False
                     continue
                 else :
                     oF.write("\t" + headersList[i])
@@ -134,6 +157,12 @@ with gzip.open(expressionOut, 'w') as oF :
             first = True
             firstOACp4C = True
             firstValueOACp4C = 0
+            firstSKMEL28 = True
+            firstValueSKMEL28 = 0
+            firstKMH2 = True
+            firstValueKMH2 = 0
+            firstOCIAML5 = True
+            firstValueOCIAML5 = 0
             for i in indecisOfInterest :
                 if first == True :
                     first = False
@@ -144,9 +173,32 @@ with gzip.open(expressionOut, 'w') as oF :
                         firstValueOACp4C = float(lineList[i])
                         continue
                     else :
-                        averagedOACp4CValue = (firstValueOACp4C + float(lineList[i])) / 2
-                        print(str(averagedOACp4CValue))
-                        oF.write("\t" + str(averagedOACp4CValue))
+                        averagedValue = (firstValueOACp4C + float(lineList[i])) / 2
+                        oF.write("\t" + str(averagedValue))
+                elif headersList[i] == "SK-MEL-28" : #The original dataset has two variables titled OACp4C, this will label only the second in the header so we can average the values on each line and leave the value in this indeci
+                    if firstSKMEL28 == True :
+                        firstSKMEL28 = False
+                        firstValueSKMEL28 = float(lineList[i])
+                        continue
+                    else :
+                        averagedValue = (firstValueSKMEL28 + float(lineList[i])) / 2
+                        oF.write("\t" + str(averagedValue))
+                elif headersList[i] == "KM-H2" : #The original dataset has two variables titled OACp4C, this will label only the second in the header so we can average the values on each line and leave the value in this indeci
+                    if firstKMH2 == True :
+                        firstKMH2 = False
+                        firstValueKMH2 = float(lineList[i])
+                        continue
+                    else :
+                        averagedValue = (firstValueKMH2 + float(lineList[i])) / 2
+                        oF.write("\t" + str(averagedValue))
+                elif headersList[i] == "OCI-AML5" : #The original dataset has two variables titled OACp4C, this will label only the second in the header so we can average the values on each line and leave the value in this indeci
+                    if firstOCIAML5 == True :
+                        firstOCIAML5 = False
+                        firstValueOCIAML5 = float(lineList[i])
+                        continue
+                    else :
+                        averagedValue = (firstValueOCIAML5 + float(lineList[i])) / 2
+                        oF.write("\t" + str(averagedValue))
                 else :
                     oF.write("\t" + str(lineList[i]))
             oF.write("\n")
@@ -248,3 +300,10 @@ print("Iterations no racs info: " + str(noRACSList))
 print("Iterations no variants info: " + str(noVariants))
 print("Iterations no Dose Response: " + str(noDoseResposeList))
 
+#transpose the expressionFile
+with gzip.open(tmpExpression, 'r') as f :
+    with gzip.open(finalExpression, 'w') as oF : 
+        data = np.genfromtxt(f,delimiter='\t',dtype=str)
+        for line in data.T :
+            stringLine = ("\t").join([str(element) for element in line]) + "\n"
+            oF.write(stringLine)

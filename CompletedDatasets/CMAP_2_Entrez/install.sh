@@ -7,12 +7,7 @@ function downloadAndInstall {
   if [ ! -f "$fileName" ];
   then
     curl -o "$fileName" -L "$url"
-    if [ "$2" == "tar" ];
-    then
-      tar -xvf "$fileName" --directory "$softwareFolder"
-    else
-      bash "$fileName" -b -p "$2"
-    fi
+    bash "$fileName" -b -p "$2"
     rm "$fileName"
   fi
 }
@@ -27,4 +22,12 @@ downloadAndInstall "https://repo.continuum.io/miniconda/Miniconda3-4.3.27.1-Linu
 
 #setting up environment for this project
 export PATH=$softwareName/bin:$PATH
-conda create --name my_GDSC_Expression_env -y python=2.7.11 pandas=0.18 xlrd=1.1.0 
+conda create --name R_env pip
+
+#install all the R packages in the environment
+source activate R_env
+conda install r-essentials
+conda install -y -c bioconda r-sleuth 
+conda install -c r r-xml=3.98_1.5
+Rscript installRPackages.R
+source deactivate R_env

@@ -1,3 +1,16 @@
 */tmp/*
+*/Software/*
 */data.tsv.gz
 */metadata.tsv.gz
+CompletedDatasets/CMAP_2_Entrez/tmp/*
+CompletedDatasets/CMAP_2_Entrez/Software/*
+CompletedDatasets/CMAP_2_Entrez/data.tsv.gz
+CompletedDatasets/CMAP_2_Entrez/metadata.tsv.gz
+CompletedDatasets/GDSC_Expression/tmp/*
+CompletedDatasets/GDSC_Expression/Software/*
+CompletedDatasets/GDSC_Expression/data.tsv.gz
+CompletedDatasets/GDSC_Expression/metadata.tsv.gz
+CompletedDatasets/LINCS/LINCS_PhaseI_Level5/tmp/*
+CompletedDatasets/LINCS/LINCS_PhaseI_Level5/Software/*
+CompletedDatasets/LINCS/LINCS_PhaseI_Level5/data.tsv.gz
+CompletedDatasets/LINCS/LINCS_PhaseI_Level5/metadata.tsv.gz
