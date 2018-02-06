@@ -14,3 +14,11 @@ CompletedDatasets/LINCS/LINCS_PhaseI_Level5/tmp/*
 CompletedDatasets/LINCS/LINCS_PhaseI_Level5/Software/*
 CompletedDatasets/LINCS/LINCS_PhaseI_Level5/data.tsv.gz
 CompletedDatasets/LINCS/LINCS_PhaseI_Level5/metadata.tsv.gz
+CompletedDatasets/LINCS/LINCS_PhaseI_Level4/tmp/*
+CompletedDatasets/LINCS/LINCS_PhaseI_Level4/Software/*
+CompletedDatasets/LINCS/LINCS_PhaseI_Level4/data.tsv.gz
+CompletedDatasets/LINCS/LINCS_PhaseI_Level4/metadata.tsv.gz
+CompletedDatasets/LINCS/LINCS_PhaseI_Level3/tmp/*
+CompletedDatasets/LINCS/LINCS_PhaseI_Level3/Software/*
+CompletedDatasets/LINCS/LINCS_PhaseI_Level3/data.tsv.gz
+CompletedDatasets/LINCS/LINCS_PhaseI_Level3/metadata.tsv.gz
