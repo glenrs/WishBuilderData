@@ -26,13 +26,7 @@ cellInfo=$redirectedTempFolder/GSE92742_Broad_LINCS_cell_info.txt.gz
 pertInfo=$redirectedTempFolder/GSE92742_Broad_LINCS_pert_info.txt.gz	
 pertMetrics=$redirectedTempFolder/GSE92742_Broad_LINCS_pert_metrics.txt.gz
 
-rm -f $metadataOutFile
-rm -f $dataOutFile
-
 #miniconda is used to store panda software in environments need to activate environment
-echo "Setting up environment"
-cd $minicondaPath
-source activate lincs_env
-cd ../../..
+source activate WishBuilderDependencies2
 
-python parse.py $instInfoFileName $gctxFileName $metadataOutFile $dataOutFile $geneFile $cellInfo $pertInfo $pertMetrics 
+python3 parse.py $instInfoFileName $gctxFileName $metadataOutFile $dataOutFile $geneFile $cellInfo $pertInfo $pertMetrics 
